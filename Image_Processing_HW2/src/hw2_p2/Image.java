@@ -45,7 +45,6 @@ public class Image {
 
 		int width;
 		int height;
-		int maxVal;
 		int[][] img;
 		try {
 			Scanner filefinder = new Scanner(new File(fileName));
@@ -59,7 +58,7 @@ public class Image {
 			filefinder.nextLine();
 			width = filefinder.nextInt();
 			height = filefinder.nextInt();
-			maxVal = filefinder.nextInt();
+			
 
 			img = new int[height][width];
 
@@ -78,6 +77,30 @@ public class Image {
 		return new WrapperForImage(img, width, height);
 	}
 
+	public WrapperForGradient[][] findGradient() {
+		WrapperForGradient[][] toReturn = new WrapperForGradient[this.height][this.width];
+		
+		for (int i = 0; i < this.height; i ++) {
+			for (int j = 0; j < this.width; j ++) {
+				int xGrad ;
+				int yGrad ;
+				
+				if (i == 0)
+					yGrad = 0 - this.image[i][j];
+				else 
+					yGrad = this.image[i - 1][j] - this.image[i][j];
+				
+				
+				if (j == 0)
+					xGrad = 0 - this.image[i][j];
+				else 
+					xGrad = this.image[i][j - 1] - this.image[i][j];
+				
+				toReturn[i][j] = new WrapperForGradient(xGrad, yGrad);
+			}
+		}
+		return toReturn;
+	}
 	/**
 	 * This method applies a linear filter to the image with time difference of 1.
 	 * This method will overwrite the image data.
@@ -128,8 +151,9 @@ public class Image {
 					tempDiffX = originalImg[i][j + 1] - 2 * originalImg[i][j] + originalImg[i][j - 1];
 					tempDiffY = originalImg[i + 1][j] - 2 * originalImg[i][j] + originalImg[i - 1][j];
 				}
-
-				this.image[i][j] = tempDiffX + tempDiffY + originalImg[i][j];
+				
+				double tempChange = ((double) tempDiffX + (double) tempDiffY) / 10. + (double) originalImg[i][j];
+				this.image[i][j] = (int) Math.round(tempChange);
 				if (this.image[i][j] < 0)
 					this.image[i][j] = 0;
 			}
@@ -153,7 +177,7 @@ public class Image {
 	}
 
 	/**
-	 * This method handles writting to a PGM file
+	 * This method handles writing to a PGM file
 	 * @param fileName
 	 */
 	public void writeToFile(String fileName) {
@@ -197,6 +221,17 @@ public class Image {
 		return toReturn;
 	}
 	
+	public double[][] gFunction(double lambda, WrapperForGradient[][] gradient){
+		double[][] toReturn = new double[this.height][this.width];
+		for (int i = 0; i < this.height; i ++) {
+			for (int j = 0; j < this.width; j ++) {
+				WrapperForGradient currGrad = gradient[i][j];
+				double absSq = Math.pow((double)currGrad.xGradient, 2) + Math.pow((double)currGrad.yGradient, 2);
+				toReturn[i][j] = 1.0/(1.0 + absSq / Math.pow(lambda, 2));
+			}
+		}
+		return toReturn;
+	}
 	/**
 	 * A wrapper class for returning image information, containing pixel information, height and width
 	 * @author Zheng
@@ -213,5 +248,15 @@ public class Image {
 			this.y = y;
 		}
 
+	}
+	
+	class WrapperForGradient{
+		int xGradient;
+		int yGradient;
+		
+		public WrapperForGradient(int x, int y) {
+			this.xGradient = x;
+			this.yGradient = y;
+		}
 	}
 }
