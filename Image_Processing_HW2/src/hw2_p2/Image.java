@@ -6,6 +6,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
+/**
+ *  This is the image class that contains some methods to read and perform filtering on the image of a pgm file
+ * @author Zheng
+ *
+ */
 public class Image {
 
 	public static final int MAXVAL = 255;
@@ -147,6 +152,10 @@ public class Image {
 		return toReturn;
 	}
 
+	/**
+	 * This method handles writting to a PGM file
+	 * @param fileName
+	 */
 	public void writeToFile(String fileName) {
 		try {
 			PrintWriter out = new PrintWriter(fileName);
@@ -172,6 +181,11 @@ public class Image {
 
 	}
 
+	/**
+	 * Copies an 2D int array
+	 * @param toCopy 2D int Array
+	 * @return 2D int array
+	 */
 	public int[][] copyArray(int[][] toCopy){
 		int[][] toReturn = new int[toCopy.length][toCopy[0].length];
 		for (int i = 0; i < toCopy.length; i ++) {
@@ -182,6 +196,12 @@ public class Image {
 		
 		return toReturn;
 	}
+	
+	/**
+	 * A wrapper class for returning image information, containing pixel information, height and width
+	 * @author Zheng
+	 *
+	 */
 	class WrapperForImage {
 		int[][] image;
 		int x;
