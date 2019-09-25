@@ -7,7 +7,7 @@ public class Problem2_Main {
 	public static void main(String[] args) throws Exception {
 		Image img = new Image("foot.pgm");
 		WrapperForGradient[][] dispose = img.findGradient();
-		int iterns = 20;
+		int iterns = 200;
 		for (int i = 0; i < iterns; i ++) {
 			img.applyLinearFilter();
 		}
